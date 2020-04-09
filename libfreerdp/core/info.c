@@ -714,8 +714,8 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 
 	Stream_Seek(s, 2);
     WLog_INFO(TAG, "Reached T.");
-	if (settings->RdpVersion >= RDP_VERSION_5_PLUS)
-		return rdp_read_extended_info_packet(rdp, s); /* extraInfo */
+	//if (settings->RdpVersion >= RDP_VERSION_5_PLUS)
+	//	return rdp_read_extended_info_packet(rdp, s); /* extraInfo */
 
     WLog_INFO(TAG, "Reached U.");
 	return tpkt_ensure_stream_consumed(s, tpktlength);
