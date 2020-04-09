@@ -1303,6 +1303,7 @@ BOOL rdp_server_accept_mcs_connect_initial(rdpRdp* rdp, wStream* s)
 	UINT32 i;
 	rdpMcs* mcs = rdp->mcs;
 
+    WLog_INFO(TAG, "rdp_server_accept_mcs_connect_initial reached.");
 	if (!mcs_recv_connect_initial(mcs, s))
 		return FALSE;
 

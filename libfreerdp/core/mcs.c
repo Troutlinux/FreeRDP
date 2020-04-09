@@ -523,56 +523,73 @@ BOOL mcs_recv_connect_initial(rdpMcs* mcs, wStream* s)
 	BOOL upwardFlag;
 	UINT16 tlength;
 
+    
+    WLog_INFO(TAG, ">>Reached 1");
 	if (!mcs || !s)
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 2");
 	if (!tpkt_read_header(s, &tlength))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 3");
 	if (!tpdu_read_data(s, &li, tlength))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 4");
 	if (!ber_read_application_tag(s, MCS_TYPE_CONNECT_INITIAL, &length))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 5");
 	/* callingDomainSelector (OCTET_STRING) */
 	if (!ber_read_octet_string_tag(s, &length) || (Stream_GetRemainingLength(s)) < length)
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 6");
 	Stream_Seek(s, length);
 
+    WLog_INFO(TAG, ">>Reached 7");
 	/* calledDomainSelector (OCTET_STRING) */
 	if (!ber_read_octet_string_tag(s, &length) || (Stream_GetRemainingLength(s)) < length)
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 8");
 	Stream_Seek(s, length);
 
+    WLog_INFO(TAG, ">>Reached 9");
 	/* upwardFlag (BOOLEAN) */
 	if (!ber_read_BOOL(s, &upwardFlag))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 10");
 	/* targetParameters (DomainParameters) */
 	if (!mcs_read_domain_parameters(s, &mcs->targetParameters))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 11");
 	/* minimumParameters (DomainParameters) */
 	if (!mcs_read_domain_parameters(s, &mcs->minimumParameters))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 12");
 	/* maximumParameters (DomainParameters) */
 	if (!mcs_read_domain_parameters(s, &mcs->maximumParameters))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 13");
 	if (!ber_read_octet_string_tag(s, &length) || (Stream_GetRemainingLength(s)) < length)
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 14");
 	if (!gcc_read_conference_create_request(s, mcs))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 15");
 	if (!mcs_merge_domain_parameters(&mcs->targetParameters, &mcs->minimumParameters,
 	                                 &mcs->maximumParameters, &mcs->domainParameters))
 		return FALSE;
 
+    WLog_INFO(TAG, ">>Reached 16");
 	return tpkt_ensure_stream_consumed(s, tlength);
 }
 
