@@ -252,7 +252,7 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 
     WLog_ERR(TAG, "Reached: A1");
 	if (Stream_GetRemainingLength(s) < 4)
-		return FALSE;
+		return TRUE; // hacked!
 
     WLog_ERR(TAG, "Reached: A2");
 	Stream_Read_UINT16(s, clientAddressFamily); /* clientAddressFamily (2 bytes) */
