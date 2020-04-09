@@ -496,9 +496,11 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 		WCHAR* wp;
 	} ptrconv;
 
+    WLog_INFO(TAG, "Reached F.");
 	if (Stream_GetRemainingLength(s) < 18)
 		return FALSE;
 
+    WLog_INFO(TAG, "Reached G.");
 	Stream_Read_UINT32(s, settings->KeyboardCodePage); /* CodePage (4 bytes ) */
 	Stream_Read_UINT32(s, flags); /* flags (4 bytes) */
 	settings->AudioCapture = ((flags & INFO_AUDIOCAPTURE) ? TRUE : FALSE);
@@ -514,29 +516,36 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	settings->ForceEncryptedCsPdu = ((flags & INFO_FORCE_ENCRYPTED_CS_PDU) ? TRUE : FALSE);
 	settings->PasswordIsSmartcardPin = ((flags & INFO_PASSWORD_IS_SC_PIN) ? TRUE : FALSE);
 
+    WLog_INFO(TAG, "Reached H.");
 	if (flags & INFO_COMPRESSION)
 	{
+        WLog_INFO(TAG, "Reached i.");
 		CompressionLevel = ((flags & 0x00001E00) >> 9);
 		settings->CompressionLevel = CompressionLevel;
 	}
 
+	WLog_INFO(TAG, "Reached J.");
 	if (!(flags & INFO_UNICODE))
 	{
+        WLog_INFO(TAG, "Reached K.");
 		WLog_ERR(TAG, "Client without INFO_UNICODE flag: this is currently not supported");
 		return FALSE;
 	}
-
+    WLog_INFO(TAG, "Reached L.");
 	Stream_Read_UINT16(s, cbDomain);         /* cbDomain (2 bytes) */
 	Stream_Read_UINT16(s, cbUserName);       /* cbUserName (2 bytes) */
 	Stream_Read_UINT16(s, cbPassword);       /* cbPassword (2 bytes) */
 	Stream_Read_UINT16(s, cbAlternateShell); /* cbAlternateShell (2 bytes) */
 	Stream_Read_UINT16(s, cbWorkingDir);     /* cbWorkingDir (2 bytes) */
 
+    WLog_INFO(TAG, "Reached M.");
 	if (Stream_GetRemainingLength(s) < (size_t)(cbDomain + 2))
 		return FALSE;
 
+    WLog_INFO(TAG, "Reached N.");
 	if (cbDomain > 0)
 	{
+        WLog_INFO(TAG, "Reached O.");
 		/* cbDomain is the size in bytes of the character data in the Domain field.
 		 * This size excludes (!) the length of the mandatory null terminator.
 		 * Maximum value including the mandatory null terminator: 512
@@ -565,7 +574,7 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	}
 
 	Stream_Seek(s, 2);
-
+    WLog_INFO(TAG, "Reached P.");
 	if (Stream_GetRemainingLength(s) < (size_t)(cbUserName + 2))
 		return FALSE;
 
@@ -599,7 +608,7 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	}
 
 	Stream_Seek(s, 2);
-
+    WLog_INFO(TAG, "Reached Q.");
 	if (Stream_GetRemainingLength(s) < (size_t)(cbPassword + 2))
 		return FALSE;
 
@@ -633,7 +642,7 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	}
 
 	Stream_Seek(s, 2);
-
+    WLog_INFO(TAG, "Reached R.");
 	if (Stream_GetRemainingLength(s) < (size_t)(cbAlternateShell + 2))
 		return FALSE;
 
@@ -669,7 +678,7 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	}
 
 	Stream_Seek(s, 2);
-
+    WLog_INFO(TAG, "Reached S.");
 	if (Stream_GetRemainingLength(s) < (size_t)(cbWorkingDir + 2))
 		return FALSE;
 
@@ -704,10 +713,11 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 	}
 
 	Stream_Seek(s, 2);
-
+    WLog_INFO(TAG, "Reached T.");
 	if (settings->RdpVersion >= RDP_VERSION_5_PLUS)
 		return rdp_read_extended_info_packet(rdp, s); /* extraInfo */
 
+    WLog_INFO(TAG, "Reached U.");
 	return tpkt_ensure_stream_consumed(s, tpktlength);
 }
 
