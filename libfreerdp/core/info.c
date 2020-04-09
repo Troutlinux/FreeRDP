@@ -972,17 +972,22 @@ BOOL rdp_recv_client_info(rdpRdp* rdp, wStream* s)
 	UINT16 channelId;
 	UINT16 securityFlags = 0;
 
+    WLog_INFO(TAG, "Reached: A");
 	if (!rdp_read_header(rdp, s, &length, &channelId))
 		return FALSE;
 
+    WLog_INFO(TAG, "Reached: B");
 	if (!rdp_read_security_header(s, &securityFlags, &length))
 		return FALSE;
 
+    WLog_INFO(TAG, "Reached: C");
 	if ((securityFlags & SEC_INFO_PKT) == 0)
 		return FALSE;
 
+    WLog_INFO(TAG, "Reached: D");
 	if (rdp->settings->UseRdpSecurityLayer)
 	{
+        WLog_INFO(TAG, "Reached: E1");
 		if (securityFlags & SEC_REDIRECTION_PKT)
 		{
 			WLog_ERR(TAG, "Error: SEC_REDIRECTION_PKT unsupported");
@@ -991,6 +996,7 @@ BOOL rdp_recv_client_info(rdpRdp* rdp, wStream* s)
 
 		if (securityFlags & SEC_ENCRYPT)
 		{
+            WLog_INFO(TAG, "Reached: E2");
 			if (!rdp_decrypt(rdp, s, &length, securityFlags))
 			{
 				WLog_ERR(TAG, "rdp_decrypt failed");
@@ -998,7 +1004,7 @@ BOOL rdp_recv_client_info(rdpRdp* rdp, wStream* s)
 			}
 		}
 	}
-
+    WLog_INFO(TAG, "Reached: D-Complete.");
 	return rdp_read_info_packet(rdp, s, length);
 }
 
