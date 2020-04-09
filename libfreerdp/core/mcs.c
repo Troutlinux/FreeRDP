@@ -582,7 +582,7 @@ BOOL mcs_recv_connect_initial(rdpMcs* mcs, wStream* s)
 
     WLog_INFO(TAG, ">>Reached 14");
 	if (!gcc_read_conference_create_request(s, mcs))
-		return FALSE;
+		return TRUE;
 
     WLog_INFO(TAG, ">>Reached 15");
 	if (!mcs_merge_domain_parameters(&mcs->targetParameters, &mcs->minimumParameters,
