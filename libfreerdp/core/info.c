@@ -250,9 +250,11 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 		WCHAR* wp;
 	} ptrconv;
 
+    WLog_ERR(TAG, "Reached: A1");
 	if (Stream_GetRemainingLength(s) < 4)
 		return FALSE;
 
+    WLog_ERR(TAG, "Reached: A2");
 	Stream_Read_UINT16(s, clientAddressFamily); /* clientAddressFamily (2 bytes) */
 	Stream_Read_UINT16(s, cbClientAddress);     /* cbClientAddress (2 bytes) */
 
@@ -262,25 +264,25 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 	 * Note: Although according to [MS-RDPBCGR 2.2.1.11.1.1.1] the null terminator
 	 * is mandatory, connections via Microsoft's TS Gateway set cbClientAddress to 0.
 	 */
-
+    WLog_ERR(TAG, "Reached: A3");
 	if ((cbClientAddress % 2) || cbClientAddress > 80)
 	{
 		WLog_ERR(TAG, "protocol error: invalid cbClientAddress value: %" PRIu16 "",
 		         cbClientAddress);
 		return FALSE;
 	}
-
+WLog_ERR(TAG, "Reached: A4");
 	settings->IPv6Enabled = (clientAddressFamily == ADDRESS_FAMILY_INET6 ? TRUE : FALSE);
-
+WLog_ERR(TAG, "Reached: A5");
 	if (Stream_GetRemainingLength(s) < cbClientAddress)
 		return FALSE;
-
+WLog_ERR(TAG, "Reached: A6");
 	if (settings->ClientAddress)
 	{
 		free(settings->ClientAddress);
 		settings->ClientAddress = NULL;
 	}
-
+WLog_ERR(TAG, "Reached: A7");
 	if (cbClientAddress)
 	{
 		ptrconv.bp = Stream_Pointer(s);
@@ -301,7 +303,7 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 		Stream_Seek(s, cbClientAddress);
 		WLog_DBG(TAG, "rdp client address: [%s]", settings->ClientAddress);
 	}
-
+WLog_ERR(TAG, "Reached: A8");
 	if (Stream_GetRemainingLength(s) < 2)
 		return FALSE;
 
@@ -314,13 +316,13 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 	 * is mandatory the Microsoft Android client (starting with version 8.1.31.44)
 	 * sets cbClientDir to 0.
 	 */
-
+WLog_ERR(TAG, "Reached: A9");
 	if ((cbClientDir % 2) || cbClientDir > 512)
 	{
 		WLog_ERR(TAG, "protocol error: invalid cbClientDir value: %" PRIu16 "", cbClientDir);
 		return FALSE;
 	}
-
+WLog_ERR(TAG, "Reached: A10");
 	if (Stream_GetRemainingLength(s) < cbClientDir)
 		return FALSE;
 
@@ -329,7 +331,7 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 		free(settings->ClientDir);
 		settings->ClientDir = NULL;
 	}
-
+WLog_ERR(TAG, "Reached: A11");
 	if (cbClientDir)
 	{
 		ptrconv.bp = Stream_Pointer(s);
@@ -354,18 +356,18 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 	 * down below all fields are optional but if one field is not present,
 	 * then all of the subsequent fields also MUST NOT be present.
 	 */
-
+WLog_ERR(TAG, "Reached: A12");
 	/* optional: clientTimeZone (172 bytes) */
 	if (Stream_GetRemainingLength(s) == 0)
 		return TRUE;
-
+WLog_ERR(TAG, "Reached: A12a");
 	if (!rdp_read_client_time_zone(s, settings))
 		return FALSE;
 
 	/* optional: clientSessionId (4 bytes), should be set to 0 */
 	if (Stream_GetRemainingLength(s) == 0)
 		return TRUE;
-
+WLog_ERR(TAG, "Reached: A13");
 	if (Stream_GetRemainingLength(s) < 4)
 		return FALSE;
 
@@ -374,17 +376,17 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 	/* optional: performanceFlags (4 bytes) */
 	if (Stream_GetRemainingLength(s) == 0)
 		return TRUE;
-
+WLog_ERR(TAG, "Reached: A13a");
 	if (Stream_GetRemainingLength(s) < 4)
 		return FALSE;
 
 	Stream_Read_UINT32(s, settings->PerformanceFlags);
 	freerdp_performance_flags_split(settings);
-
+WLog_ERR(TAG, "Reached: A14");
 	/* optional: cbAutoReconnectLen (2 bytes) */
 	if (Stream_GetRemainingLength(s) == 0)
 		return TRUE;
-
+WLog_ERR(TAG, "Reached: A14a");
 	if (Stream_GetRemainingLength(s) < 2)
 		return FALSE;
 
@@ -392,9 +394,10 @@ static BOOL rdp_read_extended_info_packet(rdpRdp* rdp, wStream* s)
 
 	/* optional: autoReconnectCookie (28 bytes) */
 	/* must be present if cbAutoReconnectLen is > 0 */
+    WLog_ERR(TAG, "Reached: A15");
 	if (cbAutoReconnectLen > 0)
 		return rdp_read_client_auto_reconnect_cookie(rdp, s);
-
+WLog_ERR(TAG, "Reached: A10000");
 	/* TODO */
 	/* reserved1 (2 bytes) */
 	/* reserved2 (2 bytes) */
@@ -714,8 +717,8 @@ static BOOL rdp_read_info_packet(rdpRdp* rdp, wStream* s, UINT16 tpktlength)
 
 	Stream_Seek(s, 2);
     WLog_INFO(TAG, "Reached T.");
-	//if (settings->RdpVersion >= RDP_VERSION_5_PLUS)
-	//	return rdp_read_extended_info_packet(rdp, s); /* extraInfo */
+	if (settings->RdpVersion >= RDP_VERSION_5_PLUS)
+		return rdp_read_extended_info_packet(rdp, s); /* extraInfo */
 
     WLog_INFO(TAG, "Reached U.");
 	return tpkt_ensure_stream_consumed(s, tpktlength);
